@@ -1,0 +1,79 @@
+{
+    "project_name": "Project Name",
+    "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
+    "package_name": "{{ cookiecutter.project_slug|lower|replace('-', '_') }}",
+    "short_description": "A great new project",
+    "readme": "{{ cookiecutter.short_description }}",
+    "author_full_name": "Your Name",
+    "author_email": "your@email",
+    "github_organization": "saezlab",
+    "project_repo": "https://github.com/{{ cookiecutter.github_organization }}/{{ cookiecutter.project_slug }}",
+    "license": [
+        "MIT License",
+        "BSD 2-Clause License",
+        "BSD 3-Clause License",
+        "Apache License Version 2.0",
+        "GNU General Public License Version 3",
+        "GNU Lesser General Public License Version 3",
+        "ISC License",
+        "Unlicense"
+    ],
+    "_license": {
+        "MIT License": {
+            "license_short": "MIT",
+            "license_classifiers": "MIT License",
+            "license_spdx": "MIT"
+        },
+        "BSD 2-Clause License": {
+            "license_short": "BSD-2-Clause",
+            "license_classifiers": "BSD License",
+            "license_spdx": "BSD-2-Clause"
+        },
+        "BSD 3-Clause License": {
+            "license_short": "BSD-3-Clause",
+            "license_classifiers": "BSD License",
+            "license_spdx": "BSD-3-Clause"
+        },
+        "Apache License Version 2.0": {
+            "license_short": "Apache-2.0",
+            "license_classifiers": "Apache Software License",
+            "license_spdx": "Apache-2.0"
+        },
+        "GNU General Public License Version 3": {
+            "license_short": "GPL-3.0-or-later",
+            "license_classifiers": "GNU General Public License v3 (GPLv3)",
+            "license_spdx": "GPL-3.0-or-later"
+        },
+        "GNU Lesser General Public License Version 3": {
+            "license_short": "LGPL-3.0-or-later",
+            "license_classifiers": "GNU Lesser General Public License v3 (LGPLv3)",
+            "license_spdx": "LGPL-3.0-or-later"
+        },
+        "ISC License": {
+            "license_short": "ISC",
+            "license_classifiers": "ISC License (ISCL)",
+            "license_spdx": "ISC"
+        },
+        "Unlicense": {
+            "license_short": "Unlicense",
+            "license_classifiers": "The Unlicense (Unlicense)",
+            "license_spdx": "Unlicense"
+        }
+    },
+    "python_version": [
+        "3.13",
+        "3.12",
+        "3.11",
+        "3.10",
+        "3.9"
+    ],
+    "copyright_holder": "Heidelberg University Hospital",
+    
+    "__year": "{% now 'utc', '%Y' %}",
+    "_extensions": [
+        "cookiecutter.extensions.TimeExtension"
+    ],
+    "_copy_without_render": [
+        ".github/workflows/**.yaml"
+    ]
+}

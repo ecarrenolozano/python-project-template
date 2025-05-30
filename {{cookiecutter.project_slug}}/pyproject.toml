@@ -1,0 +1,322 @@
+#===================================
+#=======        BUILD       ========
+#===================================
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+#===================================
+#=======       PROJECT      ========
+#===================================
+[project]
+name = "{{ cookiecutter.project_slug }}"
+version = "0.0.1"
+description = "{{ cookiecutter.short_description }}"
+license = "{{ cookiecutter._license[cookiecutter.license].license_spdx }}"
+
+authors = [
+  {name = "{{ cookiecutter.author_full_name }}", email="{{ cookiecutter.author_email }}"},
+]
+maintainers = [
+    {name="{{ cookiecutter.author_full_name }}", email="{{ cookiecutter.author_email }}"},
+]
+
+packages = [
+    { include = "{{ cookiecutter.package_name }}" }
+]
+
+classifiers = [
+    # How mature is this project? Common values are
+    #   2 - Pre-Alpha
+    #   3 - Alpha
+    #   4 - Beta
+    #   5 - Production/Stable
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: {{ cookiecutter._license[cookiecutter.license].license_classifiers }}",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Scientific/Engineering :: Bio-Informatics"
+]
+readme = "README.md"
+requires-python = ">={{ cookiecutter.python_version }}"
+dependencies = [
+    "toml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "distlib",
+    "pre-commit>=2.17.0",
+    "bump2version",
+    "twine",
+]
+tests = [
+    "pytest>=6.0",
+    "tox>=3.20.1",
+    "tox-gh>=1.5.0",
+    "coverage>=6.0",
+    "codecov-cli>=10.2.0",
+    "diff_cover",
+    "ruff",
+]
+docs = [
+    "mkdocs-material>=9.6.14",
+    "pymdown-extensions>=10.15",
+    "mkdocstrings[python]>=0.29.1,<0.30"
+]
+
+[project.urls]
+Homepage = "{{ cookiecutter.project_repo }}"
+Repository = "{{ cookiecutter.project_repo }}"
+Issues = "{{ cookiecutter.project_repo }}/issues"
+Documentation = "https://{{ cookiecutter.project_slug }}.readthedocs.io/"
+
+#===================================
+#=======        TOOL        ========
+#===================================
+[tool.coverage.run]
+source = ["{{ cookiecutter.package_name }}"]
+omit = [
+	"**/test_*.py",
+]
+
+[tool.cruft]
+skip = [
+  "tests",
+  "{{ cookiecutter.package_name }}/__init__.py",
+  "{{ cookiecutter.package_name }}/_metadata.py",
+  "docs/api.md",
+  "docs/changelog.md",
+  "docs/references.bib",
+  "docs/references.md",
+  "docs/notebooks/example.ipynb",
+]
+
+{% if cookiecutter.project_name.lower().replace("-", "_") != cookiecutter.package_name -%}
+[tool.hatch.build.targets.wheel]
+packages = [ "{{ cookiecutter.package_name }}" ]
+{% endif -%}
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+testpaths = [
+  "tests",
+]
+xfail_strict = true
+addopts = [
+    # "-Werror",  # if 3rd party libs raise DeprecationWarnings, just use filterwarnings below
+    "--import-mode=importlib",  # allow using test files with same name
+]
+filterwarnings = [
+    # "ignore:.*U.*mode is deprecated:DeprecationWarning",
+]
+
+[tool.rstcheck]
+report_level = "INFO"
+ignore_directives = [
+    "automodule",
+    "toctree",
+]
+ignore_roles = ["ref"]
+ignore_messages = '(Unknown target name:.*|No (directive|role) entry for "(auto)?(class|method|property|function|func|mod|attr)" in module "docutils\.parsers\.rst\.languages\.en"\.)'
+
+[tool.ruff]
+line-length = 80
+target-version = "py312"
+unfixable = [ "UP" ]
+extend-include = [ "*.ipynb" ]
+format.docstring-code-format = true
+format.trailing-comma = "all"
+format.quote-style = "single"
+lint.select = [
+    "B",      # flake8-bugbear
+    "BLE",    # flake8-blind-except
+    "C4",     # flake8-comprehensions
+    "D",      # pydocstyle
+    "E",      # Error detected by Pycodestyle
+    "F",      # Errors detected by Pyflakes
+    "I",      # isort
+    "RUF100", # Report unused noqa directives
+    "TID",    # flake8-tidy-imports
+    "UP",     # pyupgrade
+    "W",      # Warning detected by Pycodestyle
+    "Q",      # Consistent quotes
+    "S307",   # eval() detection
+    "ANN",    # flake8-annotations
+]
+lint.ignore = [
+    "B008", # Errors from function calls in argument defaults. These are fine when the result is immutable.
+    "B024",
+    "D100", # Missing docstring in public module
+    "D104", # Missing docstring in public package
+    "D105", # __magic__ methods are often self-explanatory, allow missing docstrings
+    "D107", # Missing docstring in __init__
+    # Disable one in each pair of mutually incompatible rules
+    "D200",
+    "D202",
+    "D203", # We don’t want a blank line before a class docstring
+    "D213", # <> We want docstrings to start immediately after the opening triple quote
+    "D400", # first line should end with a period [Bug: doesn’t work with single-line docstrings]
+    "D401", # First line should be in imperative mood; try rephrasing
+    "E131",
+    "E251",
+    "E303",
+    "E501", # line too long -> we accept long comment lines; formatter gets rid of long code lines
+    "E521",
+    "E731", # Do not assign a lambda expression, use a def -> lambda expression assignments are convenient
+    "E741", # allow I, O, l as variable names -> I is the identity matrix
+    "W503",
+    "W504",
+]
+lint.pydocstyle.convention = "numpy"
+lint.quotes.inline-quotes = "single"
+
+[tool.uv.sources]
+nbsphinx = { git = "https://github.com/deeenes/nbsphinx", branch = "timings" }
+jupyter-contrib-nbextensions = { git = "https://github.com/deeenes/jupyter_contrib_nbextensions.git", branch = "master" }
+
+[tool.ruff.lint.per-file-ignores]
+"docs/*" = [ "I" ]
+"docs/src/conf.py" = [ "D100" ]
+"tests/*" = [ "D" ]
+"tests/conftest.py" = [ "D101", "D102", "D103", "E402" ]
+"*/__init__.py" = [ "D104", "F401" ]
+
+[tool.ruff.lint.isort]
+known-first-party = [ "{{ cookiecutter.package_name }}" ]
+known-third-party = [ "numpy", "pandas" ]
+sections = [
+    "FUTURE",
+    "STDLIB",
+    "THIRDPARTY",
+    "NUM",
+    "FIRSTPARTY",
+    "LOCALFOLDER",
+]
+no-lines-before = [ "LOCALFOLDER" ]
+lines-after-imports = 1
+combine-as-imports = true
+force-sort-within-sections = true
+case-sensitive = false
+order-by-type = true
+length-sort = true
+force-wrap-aliases = true
+use-parentheses = true
+indent = "    "
+balanced-wrapping = true
+include-trailing-comma = true
+multi-line-output = 3
+exclude = [
+    "docs/_build",
+]
+
+[tool.tox]
+min_version = "3.20.0"
+isolated_build = true
+skip_missing_interpreters = true
+envlist = [
+    "covclean",
+    "lint",
+    "py{39,310,311,312,313}",
+    "coverage",
+    "readme",
+    "docs",
+]
+
+[tool.tox-gh-actions]
+python = [
+    "3.9: py39",
+    "3.10: py310",
+    "3.11: py311",
+    "3.12: py312",
+    "3.13: py313",
+]
+env = [
+    "py313: covclean, lint, coverage, readme, docs",
+]
+
+[tool.tox.envs]
+platform = [
+    "linux: linux",
+    "macos: (macos|osx|darwin)",
+]
+base_python = [
+    "py39: python3.9",
+    "py310: python3.10",
+    "py311: python3.11",
+    "py312: python3.12",
+    "py313: python3.13",
+]
+deps = [
+    ".[tests]",
+]
+passenv = "TOXENV,CI,CODECOV_*,GITHUB_ACTIONS"
+usedevelop = true
+commands = [
+    "pytest --cov --cov-append --cov-config={toxinidir}/.coveragerc --ignore docs/ {posargs:-vv {env:_PYTEST_TOX_POSARGS:}}",
+]
+
+[tool.tox.envs.py313]
+setenv = "_PYTEST_TOX_POSARGS=--log-cli-level=ERROR"
+
+[tool.tox.envs.covclean]
+description = "Clean coverage files."
+deps = [ ".[tests]" ]
+skip_install = true
+commands = [
+    "coverage erase",
+]
+
+[tool.tox.envs.lint]
+description = "Perform linting."
+deps = [ ".[dev]" ]
+skip_install = true
+commands = [
+    "pre-commit run --all-files --show-diff-on-failure {posargs:}",
+]
+
+[tool.tox.envs.coverage]
+description = "Report the coverage difference."
+deps = [ ".[tests]" ]
+skip_install = true
+depends = "py{39,310,311,312,313}"
+parallel_show_output = true
+commands = [
+    "coverage report --omit=\"tox/*\"",
+    "coverage xml --omit=\"tox/*\" -o {toxinidir}/coverage.xml",
+    "diff-cover --compare-branch origin/main {toxinidir}/coverage.xml",
+]
+
+[tool.tox.envs.docs]
+description = "Build the documentation."
+skip_install = true
+allowlist_externals = [ "uv" ]
+commands = [
+    "uv sync --extra docs",
+    "uv run sphinx-build --color -b html {toxinidir}/docs/source {toxinidir}/docs/build/html",
+    "python -c 'import pathlib; print(f\"Documentation is available under:\", pathlib.Path(f\"{toxinidir}\") / \"docs\" / \"build\" / \"html\" / \"index.html\")'",
+]
+
+[tool.tox.envs.clean-docs]
+description = "Clean the documentation artifacts."
+skip_install = true
+changedir = "{toxinidir}/docs"
+allowlist_externals = [ "make" ]
+commands = [
+    "make clean",
+]
+
+[tool.tox.envs.readme]
+description = "Check if README renders on PyPI."
+deps = [ ".[dev]" ]
+skip_install = true
+allowlist_externals = [ "uv" ]
+commands = [
+    "uv build --wheel --out-dir {envtmpdir}/build",
+    "twine check {envtmpdir}/build/*",
+]
+
+
+
