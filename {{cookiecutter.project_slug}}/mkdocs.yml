@@ -42,8 +42,8 @@ nav:
   - Learn:
     - Tutorials:
       - Basics: learn/tutorials/tutorial0001_basics.md
-      - HowTo / FAQ:
-        - learn/guides/index.md
+    - HowTo / FAQ:
+      - learn/guides/index.md
 
   - Explanations:
     - learn/explanation/index.md
